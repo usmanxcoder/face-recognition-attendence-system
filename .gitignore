@@ -1,0 +1,18 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Local student data and biometric artifacts
+/dataset/
+/attendance/
+/database/
+/trainer/
+/static/attendance_photos/
+
+# Local configuration and tooling
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.vscode/

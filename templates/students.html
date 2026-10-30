@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Students Management</title>
+
+    <!-- Bootstrap -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Custom CSS -->
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body class="bg-light">
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+
+    <div class="container">
+
+        <a class="navbar-brand fw-bold" href="/">
+
+            🎓 Face Recognition Attendance
+
+        </a>
+
+        <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse"
+            id="navbarNav">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+
+                    <a class="nav-link" href="/">
+
+                        Dashboard
+
+                    </a>
+
+                </li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link active"
+                        href="/students">
+
+                        Students
+
+                    </a>
+
+                </li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                        href="/attendance">
+
+                        Attendance
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- ================= PAGE HEADER ================= -->
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <div>
+
+            <h2 class="fw-bold">
+
+                👨‍🎓 Students Management
+
+            </h2>
+
+            <p class="text-muted">
+
+                Manage all registered students
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <a href="/"
+                class="btn btn-secondary">
+
+                <i class="fa fa-home"></i>
+
+                Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <!-- ================= DASHBOARD CARDS ================= -->
+
+    <div class="row mt-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body text-center">
+
+                    <i class="fa-solid fa-user-graduate fa-3x text-primary"></i>
+
+                    <h5 class="mt-3">
+
+                        Total Students
+
+                    </h5>
+
+                    <h2 class="fw-bold text-primary">
+
+                        {{ total_students }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-8">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <form action="/students" method="GET">
+
+                        <div class="input-group">
+
+                            <input
+
+                                type="text"
+
+                                class="form-control"
+
+                                name="search"
+
+                                placeholder="Search Student by ID or Name"
+
+                                value="{{ request.args.get('search','') }}">
+
+                            <button
+
+                                class="btn btn-primary"
+
+                                type="submit">
+
+                                <i class="fa fa-search"></i>
+
+                                Search
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= ACTION BUTTONS ================= -->
+
+    <div class="row mt-4">
+
+        <div class="col-md-3 mb-2">
+
+            <a href="/add_student"
+
+               class="btn btn-success w-100">
+
+                <i class="fa fa-user-plus"></i>
+
+                Add Student
+
+            </a>
+
+        </div>
+
+        <div class="col-md-4 mb-2">
+            <form action="{{ url_for('train_model') }}" method="post">
+                <button type="submit" class="btn btn-info w-100">
+                    <i class="fa fa-brain"></i>
+                    Train Model
+                </button>
+            </form>
+        </div>
+
+        <div class="col-md-4 mb-2">
+            <form action="{{ url_for('start_attendance') }}" method="post">
+                <button type="submit" class="btn btn-danger w-100">
+                    <i class="fa fa-play"></i>
+                    Start Attendance
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+
+    <!-- ================= FLASH MESSAGE ================= -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+    {% for category, message in messages %}
+
+    <div class="alert alert-{{ category }} alert-dismissible fade show mt-4">
+
+        {{ message }}
+
+        <button
+
+            type="button"
+
+            class="btn-close"
+
+            data-bs-dismiss="alert">
+
+        </button>
+
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+    {% endwith %}
+
+
+    <!-- ================= STUDENT TABLE ================= -->
+
+    <div class="card mt-4 shadow">
+
+        <div class="card-header bg-primary text-white">
+
+            <h5 class="mb-0">
+
+                Registered Students
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+                        <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle text-center">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>Student ID</th>
+
+                            <th>Name</th>
+
+                            <th width="280">Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% if total_students > 0 %}
+
+                        {% for row in table %}
+
+                        <tr>
+
+                            <td>
+
+                                {{ row["Student_ID"] }}
+
+                            </td>
+
+                            <td>
+
+                                {{ row["Name"] }}
+
+                            </td>
+
+                            <td>
+
+                                <a href="/edit_student/{{ row['Student_ID'] }}"
+
+                                   class="btn btn-warning btn-sm">
+
+                                    <i class="fa fa-edit"></i>
+
+                                    Edit
+
+                                </a>
+
+                                <form action="{{ url_for('delete_student', student_id=row['Student_ID']) }}"
+                                      method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm delete-button">
+                                        <i class="fa fa-trash"></i>
+                                        Delete
+                                    </button>
+                                </form>
+
+                                <form action="{{ url_for('capture_student', student_id=row['Student_ID']) }}"
+                                      method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        <i class="fa fa-camera"></i>
+                                        Capture
+                                    </button>
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="3">
+
+                                No Students Found
+
+                            </td>
+
+                        </tr>
+
+                    {% endif %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= FOOTER ================= -->
+
+<div class="container mt-5">
+
+    <hr>
+
+    <div class="text-center text-muted mb-3">
+
+        <p>
+
+            © 2026 Face Recognition Attendance System
+
+            <br>
+
+            Developed by <strong>Usman Ghani</strong>
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JS -->
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<script>
+
+// Auto Close Flash Messages
+setTimeout(function(){
+
+    let alerts = document.querySelectorAll(".alert");
+
+    alerts.forEach(function(alert){
+
+        alert.style.transition = "0.5s";
+
+        alert.style.opacity = "0";
+
+        setTimeout(function(){
+
+            alert.remove();
+
+        },500);
+
+    });
+
+},3000);
+
+
+// Confirm Before Delete
+document.querySelectorAll(".btn-danger").forEach(function(button){
+
+    button.addEventListener("click",function(e){
+
+        if(!confirm("Are you sure you want to delete this student?")){
+
+            e.preventDefault();
+
+        }
+
+    });
+
+});
+
+
+// Highlight Search Box
+let search = document.querySelector("input[name='search']");
+
+if(search){
+
+    search.addEventListener("focus",function(){
+
+        this.style.boxShadow="0px 0px 8px #0d6efd";
+
+    });
+
+    search.addEventListener("blur",function(){
+
+        this.style.boxShadow="none";
+
+    });
+
+}
+
+</script>
+
+</body>
+
+</html>

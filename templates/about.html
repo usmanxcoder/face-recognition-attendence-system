@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About the project</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">Face Recognition Attendance</a>
+            <a class="btn btn-light" href="{{ url_for('home') }}">Dashboard</a>
+        </div>
+    </nav>
+    <main class="container py-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h2">About this project</h1>
+                <p class="text-muted">
+                    This local attendance app uses OpenCV face recognition to help record
+                    student check-ins, with a Flask dashboard for student and attendance records.
+                </p>
+                <h2 class="h5 mt-4">Typical workflow</h2>
+                <ol>
+                    <li>Add a student and capture face images using the connected camera.</li>
+                    <li>Train the recognition model from the captured images.</li>
+                    <li>Start attendance and review or download the recorded check-ins.</li>
+                </ol>
+                <div class="alert alert-warning mb-0" role="note">
+                    Face images and attendance records are sensitive personal data. Get consent,
+                    restrict access, and delete records and images when they are no longer needed.
+                    Recognition can be wrong, so provide a manual way to verify attendance.
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
